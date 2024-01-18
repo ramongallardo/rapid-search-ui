@@ -67,12 +67,13 @@ const Page = () => {
       toast("Error saving data", { type: "error" });
     } finally {
       setIsSaving(false);
+      setFormData({ SR: "", Title: "", Customer: "", Description: "" });
     }
   };
 
   return (
     <div>
-      <ToastContainer/> 
+      <ToastContainer />
       <div className="flex flex-col items-center min-h-screen bg-gray-100">
         <Card className="shadow-lg max-w-2xl mx-auto mb-8 mt-1-3">
           <CardHeader>
@@ -87,6 +88,7 @@ const Page = () => {
               <Input
                 id="Title"
                 placeholder="Enter the Title of the request"
+                value={formData.Title}
                 onChange={handleChange}
               />
             </div>
@@ -95,6 +97,7 @@ const Page = () => {
               <Textarea
                 id="Description"
                 placeholder="Enter the Description of the request"
+                value={formData.Description}
                 onChange={handleChange}
               />
             </div>
@@ -103,6 +106,7 @@ const Page = () => {
               <Input
                 id="Customer"
                 placeholder="Enter the Customer's name"
+                value={formData.Customer}
                 onChange={handleChange}
               />
             </div>
@@ -111,6 +115,7 @@ const Page = () => {
               <Input
                 id="SR"
                 placeholder="Enter the service request number"
+                value={formData.SR}
                 onChange={handleChange}
               />
             </div>

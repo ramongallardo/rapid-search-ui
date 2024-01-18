@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import Spinner from "@/components/ui/spinner";
+
 const API_SEARCH_URL = "http://localhost:3100/search";
 
 interface ResponseDataItem {
@@ -27,8 +29,10 @@ const Page = () => {
     candidates: 5,
   });
   const [responseData, setResponseData] = useState<ResponseData>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fetchData(url: string) {
+    setIsLoading(true); // Set loading to true before fetch starts
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -41,23 +45,33 @@ const Page = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      setResponseData(data);
+      // process data as needed
       console.log(data);
-      return data;
+      setResponseData(data);
     } catch (error) {
-      console.error("Error fetching data", error);
+      console.error(error);
+    } finally {
+      setIsLoading(false); // Set loading to false after fetch ends
     }
   }
 
-  const handleSearch = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    await handleSearch(event);
+  };
+
+  const handleSearch = async (
+    event:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault(); // prevent the form from refreshing the page
 
-    console.log(`Searching for ${searchText}`);
+    console.log(`Searching for "${searchText}"`);
     searchTerm.query = searchText;
     setSearchTerm(searchTerm);
 
     // Call fetchData after updating searchTerm
-    fetchData(
+    await fetchData(
       `${API_SEARCH_URL}?query=${searchTerm.query}&limit=${searchTerm.limit}&candidates=${searchTerm.candidates}`
     );
   };
@@ -96,7 +110,10 @@ const Page = () => {
             <CardTitle>Search</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="flex items-center space-x-2">
+            <form
+              className="flex items-center space-x-2"
+              onSubmit={handleSubmit}
+            >
               <Input
                 className="flex-grow"
                 placeholder="Enter search query"
@@ -107,41 +124,56 @@ const Page = () => {
               <Button
                 className="w-1/3"
                 onClick={handleSearch}
-                onSubmit={handleSearch}
+                disabled={isLoading || !searchText || searchText.trim() === ""}
               >
                 Search
               </Button>
             </form>
           </CardContent>
         </Card>
-        {responseData && responseData.length !== 0 && (
-          <Card className="shadow-lg mx-auto mb-8 w-4/5">
-            <div className={`grid grid-cols-5 gap-4 p-4`}>
-              {columns.map((column, columnIndex) => (
-                <div
-                  key={columnIndex}
-                  className={`font-bold text-xl col-span-1 text-left`}
-                >
-                  {column.label}
-                </div>
-              ))}
-            </div>
 
-            <div className="border-t border-gray-200">
-              {responseData &&
-                responseData.map((row, index) => (
-                  <div key={index} className={`grid grid-cols-5 gap-4 p-4`}>
-                    <div className="font-bold">{row.SR}</div>
-                    <div>{row.Title}</div>
-                    <div>{row.Customer}</div>
-                    <div>{row.Description}</div>
-                    <div>{row.Score.toFixed(6)}</div>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          responseData &&
+          responseData.length !== 0 && (
+            <Card className="shadow-lg mx-auto mb-8 w-4/5">
+              <div
+                className={`grid grid-cols-5 gap-4 p-4`}
+                style={{ gridTemplateColumns: "1fr 3fr 2fr 4fr 1fr" }}
+              >
+                {columns.map((column, columnIndex) => (
+                  <div key={columnIndex} className={`font-bold text-xl`}>
+                    {column.label}
                   </div>
                 ))}
-            </div>
-          </Card>
+              </div>
+
+              <div className="border-t border-gray-200">
+                {responseData &&
+                  responseData.map((row, index) => (
+                    <div
+                      key={index}
+                      className={`grid grid-cols-${columns.length} gap-4 p-4`}
+                      style={{ gridTemplateColumns: "1fr 3fr 2fr 4fr 1fr" }}
+                    >
+                      <div className={`text-sm col-span-1`}>{row.SR}</div>
+                      <div className={`text-sm col-span-1`}>{row.Title}</div>
+                      <div className={`text-sm col-span-1`}>{row.Customer}</div>
+                      <div className={`text-sm col-span-1`}>
+                        {row.Description}
+                      </div>
+                      <div className={`text-sm col-span-1`}>
+                        {row.Score.toFixed(6)}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </Card>
+          )
         )}
       </div>
+
       <div className="mb-32 grid text-center lg:text-left fixed top-0 right-0 pb-10">
         <Link
           href="/addvector"
@@ -163,4 +195,3 @@ const Page = () => {
 };
 
 export default Page;
-
