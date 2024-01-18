@@ -120,7 +120,7 @@ const Page = () => {
               {columns.map((column, columnIndex) => (
                 <div
                   key={columnIndex}
-                  className={`font-bold text-xl col-span-${column.width}`}
+                  className={`font-bold text-xl col-span-1 text-left`}
                 >
                   {column.label}
                 </div>
@@ -132,7 +132,7 @@ const Page = () => {
                 responseData.map((row, index) => (
                   <div key={index} className={`grid grid-cols-5 gap-4 p-4`}>
                     <div className="font-bold">{row.SR}</div>
-                    <div>{row.Description}</div>
+                    <div>{row.Title}</div>
                     <div>{row.Customer}</div>
                     <div>{row.Description}</div>
                     <div>{row.Score.toFixed(6)}</div>
