@@ -130,10 +130,7 @@ const Page = () => {
             <div className="border-t border-gray-200">
               {responseData &&
                 responseData.map((row, index) => (
-                  <div
-                    key={index}
-                    className={`grid grid-cols-5 gap-4 p-4`}
-                  >
+                  <div key={index} className={`grid grid-cols-5 gap-4 p-4`}>
                     <div className="font-bold">{row.SR}</div>
                     <div>{row.Description}</div>
                     <div>{row.Customer}</div>
