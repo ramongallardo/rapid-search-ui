@@ -116,7 +116,7 @@ const Page = () => {
         </Card>
         {responseData && responseData.length !== 0 && (
           <Card className="shadow-lg mx-auto mb-8 w-4/5">
-            <div className={`grid grid-cols-${columns.length} gap-4 p-4`}>
+            <div className={`grid grid-cols-5 gap-4 p-4`}>
               {columns.map((column, columnIndex) => (
                 <div
                   key={columnIndex}
@@ -132,7 +132,7 @@ const Page = () => {
                 responseData.map((row, index) => (
                   <div
                     key={index}
-                    className={`grid grid-cols-${columns.length} gap-4 p-4`}
+                    className={`grid grid-cols-5 gap-4 p-4`}
                   >
                     <div className="font-bold">{row.SR}</div>
                     <div>{row.Description}</div>
